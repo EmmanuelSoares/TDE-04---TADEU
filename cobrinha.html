@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo da Cobrinha</title>
+</head>
+
+<body>
+
+    <canvas id="tela" width="400" height="400"></canvas>
+    <script type="text/javascript">
+
+        window.onload = function(){
+
+            var tela = document.getElementById('tela');
+            var contexto = tela.getContext("2d");
+            document.addEventListener("keydown", keyPush);    //toda  vez que uma tecla for pressionada, vai ativar a função keypush
+            setInterval(game, 80);
+
+            const vel = 1;
+            
+            var vx = vy = 0;
+            var px = 10;
+            var py = 15;
+            var lp = 20; //Tamanho  das  Peças
+            var qp = 20; //Quantidade de Peças
+            var ax = ay = 15;
+
+            var rastro = [];
+            cauda = 5;
+
+            function game(){
+                px += vx;
+                py += vy;
+
+                //Esses if's servem para se a cobra sair pela esquerda, ela apareca pela direita e vice-versa.
+                if (px<0) {
+                    px = qp-1;
+                }
+                if (px>qp-1){
+                    px = 0;
+                }
+                if (py<0) {
+                    py = qp-1;
+                }
+                if (py>qp-1) {
+                    py = 0;
+                }
+
+                //Para pintar a tela
+                contexto.fillStyle = "black";
+				contexto.fillRect(0,0, tela.width, tela.height);
+
+                //Para pintar a maçã
+                contexto.fillStyle = "red";
+                contexto.fillRect(ax*lp, ay*lp, lp,lp);
+
+                //Para pintar a cobra
+                contexto.fillStyle = "gray";
+                for (var i = 0; i < rastro.length; i++) {
+                    contexto.fillRect(rastro[i].x*lp, rastro[i].y*lp, lp,lp); //Para pintar o rastro ao engolir a maçã
+
+                    if(rastro[i].x == px && rastro[i].y == py) //Se a cabeça estiver na mesma posição que o rastro, game over
+                    {
+                        vx = vy = 0;
+                        cauda = 5;
+                    }
+                }
+
+                rastro.push({x:px, y:py})
+                while (rastro.length > cauda) {
+                    rastro.shift();
+                }
+
+                //Para aumentar a cauda e definir nova localização da maçã
+                if (ax==px && ay==py){
+					cauda++;
+					ax = Math.floor(Math.random()*qp);
+					ay = Math.floor(Math.random()*qp);
+				}
+
+            }
+
+            function keyPush(event){
+
+                switch (event.keyCode)  {
+                    case 37://Esquerda
+                        vx = -vel;
+                        vy = 0;
+                        break;
+                    case 38: //Cima
+                        vx = 0;
+                        vy = -vel;
+                        break;
+                    case 39: //Direita
+                        vx = vel;
+                        vy = 0;
+                        break;
+                    case 40: //Baixa
+                        vx = 0;
+                        vy = vel;
+                        break;
+                    default:
+
+                    break;
+                    
+                }
+
+            }
+
+        }
+
+
+
+
+
+
+
+    </script>
+</body>
+</html>
+
